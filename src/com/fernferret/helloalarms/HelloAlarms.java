@@ -20,7 +20,8 @@ public class HelloAlarms extends Activity {
 	private static final int SINGLE_ALARM_RC = 0;
 	private static final int MULTI_ALARM_RC = 1;
 	private static final int NO_FLAGS = 0;
-	private static final int TIME_IN_SECONDS_FOR_ALARM = 10;
+	private static final int TIME_IN_SECONDS_FOR_SINGLE_ALARM = 10;
+	private static final int TIME_IN_SECONDS_FOR_MULTI_ALARM = 7;
 	
 	// Shared Toast
 	private Toast mToast;
@@ -67,7 +68,7 @@ public class HelloAlarms extends Activity {
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTimeInMillis(currentTime);
 			
-			calendar.add(Calendar.SECOND, TIME_IN_SECONDS_FOR_ALARM);
+			calendar.add(Calendar.SECOND, TIME_IN_SECONDS_FOR_SINGLE_ALARM);
 			
 			AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 			alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), singleAlarmPendingIntent);
@@ -84,7 +85,7 @@ public class HelloAlarms extends Activity {
 			if (mToast != null) {
 				mToast.cancel();
 			}
-			mToast = Toast.makeText(HelloAlarms.this, R.string.one_shot_scheduled, Toast.LENGTH_LONG);
+			mToast = Toast.makeText(HelloAlarms.this, R.string.one_shot_scheduled, Toast.LENGTH_SHORT);
 			mToast.show();
 		}
 	};
@@ -99,6 +100,22 @@ public class HelloAlarms extends Activity {
 			Intent multiAlarmIntent = new Intent(HelloAlarms.this, MultiAlarm.class);
 			
 			PendingIntent multiAlarmPendingIntent = PendingIntent.getBroadcast(HelloAlarms.this, MULTI_ALARM_RC, multiAlarmIntent, NO_FLAGS);
+			
+			// Set the first alarm time to fire at now plus whatever the time we have set for the alarm in seconds
+			long firstTime = SystemClock.elapsedRealtime();
+			firstTime += (TIME_IN_SECONDS_FOR_MULTI_ALARM * 1000);
+			
+			
+			
+			AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+			alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstTime, TIME_IN_SECONDS_FOR_MULTI_ALARM * 1000, multiAlarmPendingIntent);
+			
+			if (mToast != null) {
+				mToast.cancel();
+			}
+			mToast = Toast.makeText(HelloAlarms.this, "Starting Repeating Task", Toast.LENGTH_SHORT);
+			mToast.show();
+			
 		}
 	};
 	
@@ -115,7 +132,7 @@ public class HelloAlarms extends Activity {
 		public void run() {
 			final long start = mSingleStartTime;
 			long millis = SystemClock.uptimeMillis() + 50;
-			double displayTime = TIME_IN_SECONDS_FOR_ALARM - ((System.currentTimeMillis() - (mSingleStartTime + TIME_IN_SECONDS_FOR_ALARM)) / 1000.0);
+			double displayTime = TIME_IN_SECONDS_FOR_SINGLE_ALARM - ((System.currentTimeMillis() - (mSingleStartTime + TIME_IN_SECONDS_FOR_SINGLE_ALARM)) / 1000.0);
 			int roundedTime = (int) displayTime;
 			if (displayTime < -2.0) {
 				mTimeTillSingle.setText("");
