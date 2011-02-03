@@ -91,7 +91,9 @@ public class HelloAlarms extends Activity {
 	private OnClickListener mMultiAlarmStartListener = new OnClickListener() {
 		@Override
 		public void onClick(View view) {
-			
+			// Allow the user to stop the multi alarm, but not start it again
+			mMultiStartButton.setEnabled(false);
+			mMultiStopButton.setEnabled(true);
 		}
 	};
 	
