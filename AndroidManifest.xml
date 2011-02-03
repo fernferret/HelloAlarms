@@ -21,7 +21,7 @@
 			android:name=".SingleAlarm"
 			android:process=":remote"/>
 		<receiver
-			android:name=".RepeatingAlarm"
+			android:name=".MultiAlarm"
 			android:process=":remote"/>
 	</application>
 	<uses-sdk
