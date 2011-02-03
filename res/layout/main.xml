@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:padding="20dip">
+	<Button
+		android:id="@+id/single_alarm"
+		android:text="@string/single_alarm_button_text"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"/>
+	<TextView
+		android:id="@+id/time_till_single"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:paddingTop="15dip"
+		android:paddingBottom="15dip"
+		android:gravity="center_horizontal"
+		android:text=""/>
+	<Button
+		android:id="@+id/start_button"
+		android:text="Start"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="50dip"/>
+	<Button
+		android:id="@+id/stop_button"
+		android:text="Stop"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_marginBottom="50dip"
+		android:enabled="false"/>
+</LinearLayout>
