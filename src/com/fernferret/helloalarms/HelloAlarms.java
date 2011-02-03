@@ -105,15 +105,13 @@ public class HelloAlarms extends Activity {
 			long firstTime = SystemClock.elapsedRealtime();
 			firstTime += (TIME_IN_SECONDS_FOR_MULTI_ALARM * 1000);
 			
-			
-			
 			AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 			alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstTime, TIME_IN_SECONDS_FOR_MULTI_ALARM * 1000, multiAlarmPendingIntent);
 			
 			if (mToast != null) {
 				mToast.cancel();
 			}
-			mToast = Toast.makeText(HelloAlarms.this, "Starting Repeating Task", Toast.LENGTH_SHORT);
+			mToast = Toast.makeText(HelloAlarms.this, R.string.starting_repeating_task, Toast.LENGTH_SHORT);
 			mToast.show();
 			
 		}
@@ -122,8 +120,20 @@ public class HelloAlarms extends Activity {
 	private OnClickListener mMultiAlarmStopListener = new OnClickListener() {
 		@Override
 		public void onClick(View view) {
-			// TODO Auto-generated method stub
+			Intent multiAlarmIntent = new Intent(HelloAlarms.this, MultiAlarm.class);
 			
+			PendingIntent multiAlarmPendingIntent = PendingIntent.getBroadcast(HelloAlarms.this, MULTI_ALARM_RC, multiAlarmIntent, NO_FLAGS);
+			
+			AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+			alarmManager.cancel(multiAlarmPendingIntent);
+			
+			if (mToast != null) {
+				mToast.cancel();
+			}
+			mToast = Toast.makeText(HelloAlarms.this, R.string.repeating_task_stopped, Toast.LENGTH_SHORT);
+			mToast.show();
+			mMultiStartButton.setEnabled(true);
+			mMultiStopButton.setEnabled(false);
 		}
 	};
 	

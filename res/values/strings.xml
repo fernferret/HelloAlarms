@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="starting_repeating_task">Starting Repeating Task</string>
+    <string name="repeating_task_stopped">Repeating Task Stopped</string>
     <string name="multi_alarm_is_firing">Multi alarm is firing</string>
     <string name="single_alarm_button_text">Single Alarm</string>
     <string name="single_alarm_button_text_with_param">Single Alarm (resuming in %1$d seconds)</string>
