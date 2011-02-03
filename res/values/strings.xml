@@ -11,4 +11,6 @@
     <string name="app_name">HelloAlarms</string>
     
     <string name="time_till_single">%1$.1f seconds until single fires.</string>
+    <string name="time_till_multi">%1$.1f seconds until multi fires.</string>
+    <string name="multi_restarting">Restarting in %d seconds...</string>
 </resources>

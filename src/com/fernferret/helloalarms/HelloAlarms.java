@@ -111,7 +111,7 @@ public class HelloAlarms extends Activity {
 			alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstTime, TIME_IN_SECONDS_FOR_MULTI_ALARM * 1000, multiAlarmPendingIntent);
 			
 			if (mMultiStartTime == 0L) {
-				mMultiStartTime = firstTime;
+				mMultiStartTime -= (TIME_IN_SECONDS_FOR_MULTI_ALARM * 1000);
 				mMultiHandler.removeCallbacks(mUpdateMultiTimerTask);
 				mMultiHandler.postDelayed(mUpdateMultiTimerTask, 100);
 			}
@@ -131,7 +131,7 @@ public class HelloAlarms extends Activity {
 			Intent multiAlarmIntent = new Intent(HelloAlarms.this, MultiAlarm.class);
 			
 			PendingIntent multiAlarmPendingIntent = PendingIntent.getBroadcast(HelloAlarms.this, MULTI_ALARM_RC, multiAlarmIntent, NO_FLAGS);
-			
+			mMultiHandler.removeCallbacks(mUpdateMultiTimerTask);
 			AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 			alarmManager.cancel(multiAlarmPendingIntent);
 			
@@ -173,18 +173,17 @@ public class HelloAlarms extends Activity {
 		@Override
 		public void run() {
 			long millis = SystemClock.uptimeMillis() + 100;
-			double displayTime = TIME_IN_SECONDS_FOR_MULTI_ALARM - ((System.currentTimeMillis() - (mMultiStartTime + TIME_IN_SECONDS_FOR_MULTI_ALARM)) / 1000.0);
+			double displayTime = TIME_IN_SECONDS_FOR_MULTI_ALARM - ((SystemClock.elapsedRealtime() - (mMultiStartTime + TIME_IN_SECONDS_FOR_MULTI_ALARM)) / 1000.0);
 			int roundedTime = (int) displayTime;
 			if (displayTime <= 0.0) {
-				mTimeTillMulti.setText("");
-				//mMultiHandler.removeCallbacks(mUpdateSingleTimerTask);
+				mMultiStartButton.setText(getString(R.string.multi_restarting, 0));
+				mTimeTillMulti.setText(getString(R.string.time_till_multi, 0.0));
 				mMultiStartTime = SystemClock.elapsedRealtime();
-				//mSingleButton.setText(getString(R.string.single_alarm_button_text));
 			} else {
-				mTimeTillMulti.setText(getString(R.string.time_till_single, displayTime));
-				//mSingleButton.setText(getString(R.string.single_alarm_button_text_with_param, roundedTime + 2));
+				
+				mMultiStartButton.setText(getString(R.string.multi_restarting, roundedTime + 1));
+				mTimeTillMulti.setText(getString(R.string.time_till_multi, displayTime));
 			}
-			
 			mMultiHandler.postAtTime(this, millis);
 		}
 	};

@@ -22,8 +22,7 @@
 		android:id="@+id/start_button"
 		android:text="Start"
 		android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:layout_marginBottom="50dip"/>
+		android:layout_height="wrap_content"/>
 	<TextView
 		android:id="@+id/time_till_next_multi"
 		android:layout_width="fill_parent"
@@ -36,7 +35,6 @@
 		android:text="Stop"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:layout_marginBottom="50dip"
 		android:enabled="false"/>
 	<TextView
 		android:id="@+id/times_multi_has_run"
