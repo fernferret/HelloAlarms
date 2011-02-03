@@ -18,6 +18,7 @@ import android.widget.Toast;
 public class HelloAlarms extends Activity {
 	
 	private static final int SINGLE_ALARM_RC = 0;
+	private static final int MULTI_ALARM_RC = 1;
 	private static final int NO_FLAGS = 0;
 	private static final int TIME_IN_SECONDS_FOR_ALARM = 10;
 	
@@ -94,6 +95,10 @@ public class HelloAlarms extends Activity {
 			// Allow the user to stop the multi alarm, but not start it again
 			mMultiStartButton.setEnabled(false);
 			mMultiStopButton.setEnabled(true);
+			
+			Intent multiAlarmIntent = new Intent(HelloAlarms.this, MultiAlarm.class);
+			
+			PendingIntent multiAlarmPendingIntent = PendingIntent.getBroadcast(HelloAlarms.this, MULTI_ALARM_RC, multiAlarmIntent, NO_FLAGS);
 		}
 	};
 	
