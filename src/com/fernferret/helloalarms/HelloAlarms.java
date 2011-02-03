@@ -21,12 +21,20 @@ public class HelloAlarms extends Activity {
 	private static final int NO_FLAGS = 0;
 	private static final int TIME_IN_SECONDS_FOR_ALARM = 10;
 	
+	// Shared Toast
 	private Toast mToast;
 	
+	// Single Alarm Variables
 	private long mSingleStartTime;
 	private Handler mSingleHandler = new Handler();
 	private TextView mTimeTillSingle;
 	private Button mSingleButton;
+	
+	// Multi Alarm Variables
+	private long mMultiStartTime;
+	private Handler mMultiHandler = new Handler();
+	private Button mMultiStartButton;
+	private Button mMultiStopButton;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -36,11 +44,11 @@ public class HelloAlarms extends Activity {
 		mSingleButton = (Button) findViewById(R.id.single_alarm);
 		mSingleButton.setOnClickListener(mSingleAlarmListener);
 		
-		Button multiAlarmStart = (Button) findViewById(R.id.start_button);
-		multiAlarmStart.setOnClickListener(mMultiAlarmStartListener);
+		mMultiStartButton = (Button) findViewById(R.id.start_button);
+		mMultiStartButton.setOnClickListener(mMultiAlarmStartListener);
 		
-		Button multiAlarmStop = (Button) findViewById(R.id.stop_button);
-		multiAlarmStop.setOnClickListener(mMultiAlarmStopListener);
+		mMultiStopButton = (Button) findViewById(R.id.stop_button);
+		mMultiStopButton.setOnClickListener(mMultiAlarmStopListener);
 		
 		mTimeTillSingle = (TextView) findViewById(R.id.time_till_single);
 	}
@@ -83,7 +91,7 @@ public class HelloAlarms extends Activity {
 	private OnClickListener mMultiAlarmStartListener = new OnClickListener() {
 		@Override
 		public void onClick(View view) {
-			// TODO Auto-generated method stub
+			
 		}
 	};
 	
