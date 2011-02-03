@@ -37,6 +37,7 @@ public class HelloAlarms extends Activity {
 	private Handler mMultiHandler = new Handler();
 	private Button mMultiStartButton;
 	private Button mMultiStopButton;
+	private TextView mTimeTillMulti;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -53,6 +54,7 @@ public class HelloAlarms extends Activity {
 		mMultiStopButton.setOnClickListener(mMultiAlarmStopListener);
 		
 		mTimeTillSingle = (TextView) findViewById(R.id.time_till_single);
+		mTimeTillMulti = (TextView) findViewById(R.id.time_till_next_multi);
 	}
 	
 	private OnClickListener mSingleAlarmListener = new OnClickListener() {
@@ -75,8 +77,8 @@ public class HelloAlarms extends Activity {
 			
 			if (mSingleStartTime == 0L) {
 				mSingleStartTime = currentTime;
-				mSingleHandler.removeCallbacks(mUpdateTimersTask);
-				mSingleHandler.postDelayed(mUpdateTimersTask, 100);
+				mSingleHandler.removeCallbacks(mUpdateSingleTimerTask);
+				mSingleHandler.postDelayed(mUpdateSingleTimerTask, 100);
 			}
 			
 			/**
@@ -108,6 +110,12 @@ public class HelloAlarms extends Activity {
 			AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 			alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, firstTime, TIME_IN_SECONDS_FOR_MULTI_ALARM * 1000, multiAlarmPendingIntent);
 			
+			if (mMultiStartTime == 0L) {
+				mMultiStartTime = firstTime;
+				mMultiHandler.removeCallbacks(mUpdateMultiTimerTask);
+				mMultiHandler.postDelayed(mUpdateMultiTimerTask, 100);
+			}
+			
 			if (mToast != null) {
 				mToast.cancel();
 			}
@@ -137,16 +145,15 @@ public class HelloAlarms extends Activity {
 		}
 	};
 	
-	private Runnable mUpdateTimersTask = new Runnable() {
+	private Runnable mUpdateSingleTimerTask = new Runnable() {
 		@Override
 		public void run() {
-			final long start = mSingleStartTime;
-			long millis = SystemClock.uptimeMillis() + 50;
+			long millis = SystemClock.uptimeMillis() + 100;
 			double displayTime = TIME_IN_SECONDS_FOR_SINGLE_ALARM - ((System.currentTimeMillis() - (mSingleStartTime + TIME_IN_SECONDS_FOR_SINGLE_ALARM)) / 1000.0);
 			int roundedTime = (int) displayTime;
 			if (displayTime < -2.0) {
 				mTimeTillSingle.setText("");
-				mSingleHandler.removeCallbacks(mUpdateTimersTask);
+				mSingleHandler.removeCallbacks(mUpdateSingleTimerTask);
 				mSingleStartTime = 0L;
 				mSingleButton.setEnabled(true);
 				mSingleButton.setText(getString(R.string.single_alarm_button_text));
@@ -159,6 +166,26 @@ public class HelloAlarms extends Activity {
 			}
 			
 			mSingleHandler.postAtTime(this, millis);
+		}
+	};
+	
+	private Runnable mUpdateMultiTimerTask = new Runnable() {
+		@Override
+		public void run() {
+			long millis = SystemClock.uptimeMillis() + 100;
+			double displayTime = TIME_IN_SECONDS_FOR_MULTI_ALARM - ((System.currentTimeMillis() - (mMultiStartTime + TIME_IN_SECONDS_FOR_MULTI_ALARM)) / 1000.0);
+			int roundedTime = (int) displayTime;
+			if (displayTime <= 0.0) {
+				mTimeTillMulti.setText("");
+				//mMultiHandler.removeCallbacks(mUpdateSingleTimerTask);
+				mMultiStartTime = SystemClock.elapsedRealtime();
+				//mSingleButton.setText(getString(R.string.single_alarm_button_text));
+			} else {
+				mTimeTillMulti.setText(getString(R.string.time_till_single, displayTime));
+				//mSingleButton.setText(getString(R.string.single_alarm_button_text_with_param, roundedTime + 2));
+			}
+			
+			mMultiHandler.postAtTime(this, millis);
 		}
 	};
 }

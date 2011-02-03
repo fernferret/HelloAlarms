@@ -24,6 +24,13 @@
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:layout_marginBottom="50dip"/>
+	<TextView
+		android:id="@+id/time_till_next_multi"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:paddingTop="15dip"
+		android:paddingBottom="15dip"
+		android:gravity="center_horizontal"/>
 	<Button
 		android:id="@+id/stop_button"
 		android:text="Stop"
@@ -31,4 +38,11 @@
 		android:layout_height="wrap_content"
 		android:layout_marginBottom="50dip"
 		android:enabled="false"/>
+	<TextView
+		android:id="@+id/times_multi_has_run"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:paddingTop="15dip"
+		android:paddingBottom="15dip"
+		android:gravity="center_horizontal"/>
 </LinearLayout>
