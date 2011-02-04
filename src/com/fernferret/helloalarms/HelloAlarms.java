@@ -6,9 +6,13 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -23,8 +27,13 @@ public class HelloAlarms extends Activity {
 	private static final int TIME_IN_SECONDS_FOR_SINGLE_ALARM = 10;
 	private static final int TIME_IN_SECONDS_FOR_MULTI_ALARM = 7;
 	
+	private static final String MULTI_STATE = "MULTI";
+	private static final String SINGLE_STATE = "SINGLE";
+	
 	// Shared Toast
 	private Toast mToast;
+	
+	private SharedPreferences mSettings;
 	
 	// Single Alarm Variables
 	private long mSingleStartTime;
@@ -55,6 +64,35 @@ public class HelloAlarms extends Activity {
 		
 		mTimeTillSingle = (TextView) findViewById(R.id.time_till_single);
 		mTimeTillMulti = (TextView) findViewById(R.id.time_till_next_multi);
+		mSettings = PreferenceManager.getDefaultSharedPreferences(this);
+	}
+	
+	@Override
+	protected void onResume() {
+		mSingleStartTime = mSettings.getLong(SINGLE_STATE, 0L);
+		mMultiStartTime = mSettings.getLong(MULTI_STATE, 0L);
+		
+		if (mSingleStartTime != 0L) {
+			mSingleHandler.removeCallbacks(mUpdateSingleTimerTask);
+			mSingleHandler.postDelayed(mUpdateSingleTimerTask, 100);
+			mSingleButton.setEnabled(false);
+		}
+		if (mMultiStartTime != 0L) {
+			mMultiHandler.removeCallbacks(mUpdateMultiTimerTask);
+			mMultiHandler.postDelayed(mUpdateMultiTimerTask, 100);
+			mMultiStartButton.setEnabled(false);
+			mMultiStopButton.setEnabled(true);
+		}
+		super.onResume();
+	}
+	
+	@Override
+	protected void onPause() {
+		Editor editor = mSettings.edit();
+		editor.putLong(SINGLE_STATE, mSingleStartTime);
+		editor.putLong(MULTI_STATE, mMultiStartTime);
+		editor.commit();
+		super.onPause();
 	}
 	
 	private OnClickListener mSingleAlarmListener = new OnClickListener() {
@@ -142,6 +180,9 @@ public class HelloAlarms extends Activity {
 			mToast.show();
 			mMultiStartButton.setEnabled(true);
 			mMultiStopButton.setEnabled(false);
+			mMultiStartButton.setText(R.string.start);
+			mTimeTillMulti.setText("");
+			mMultiStartTime = 0L;
 		}
 	};
 	
