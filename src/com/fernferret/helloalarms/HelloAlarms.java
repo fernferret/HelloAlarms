@@ -4,15 +4,19 @@ import java.util.Calendar;
 
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.KeyguardManager;
+import android.app.KeyguardManager.KeyguardLock;
+import android.app.KeyguardManager.OnKeyguardExitResult;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -48,6 +52,10 @@ public class HelloAlarms extends Activity {
 	private Button mMultiStopButton;
 	private TextView mTimeTillMulti;
 	
+	PowerManager.WakeLock mWakeLock;
+	KeyguardManager mKeyguardManager;
+	KeyguardLock mKeyguardLock;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -65,6 +73,11 @@ public class HelloAlarms extends Activity {
 		mTimeTillSingle = (TextView) findViewById(R.id.time_till_single);
 		mTimeTillMulti = (TextView) findViewById(R.id.time_till_next_multi);
 		mSettings = PreferenceManager.getDefaultSharedPreferences(this);
+		
+		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+		mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "My Tag");
+		mKeyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+		mKeyguardLock = mKeyguardManager.newKeyguardLock(KEYGUARD_SERVICE);
 	}
 	
 	@Override
@@ -193,12 +206,14 @@ public class HelloAlarms extends Activity {
 			double displayTime = TIME_IN_SECONDS_FOR_SINGLE_ALARM - ((System.currentTimeMillis() - (mSingleStartTime + TIME_IN_SECONDS_FOR_SINGLE_ALARM)) / 1000.0);
 			int roundedTime = (int) displayTime;
 			if (displayTime < -2.0) {
+				// sleepDevice();
 				mTimeTillSingle.setText("");
 				mSingleHandler.removeCallbacks(mUpdateSingleTimerTask);
 				mSingleStartTime = 0L;
 				mSingleButton.setEnabled(true);
 				mSingleButton.setText(getString(R.string.single_alarm_button_text));
 			} else if (displayTime < 0.0) {
+				wakeDevice();
 				mTimeTillSingle.setText("Event just fired!");
 				mSingleButton.setText(getString(R.string.single_alarm_button_text_with_param, roundedTime + 2));
 			} else {
@@ -228,4 +243,14 @@ public class HelloAlarms extends Activity {
 			mMultiHandler.postAtTime(this, millis);
 		}
 	};
+	
+	private void wakeDevice() {
+		mWakeLock.acquire();
+		mKeyguardLock.disableKeyguard();
+	}
+	
+	private void sleepDevice() {
+		mWakeLock.release();
+	}
+	
 }
