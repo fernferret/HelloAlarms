@@ -17,6 +17,10 @@
 					android:name="android.intent.category.LAUNCHER"/>
 			</intent-filter>
 		</activity>
+		<activity
+			android:name=".WakeUpAlert"
+			android:label="Get Up Now"
+			android:theme="@android:style/Theme.Wallpaper.NoTitleBar.Fullscreen"/>
 		<receiver
 			android:name=".SingleAlarm"
 			android:process=":remote"/>
@@ -26,6 +30,6 @@
 	</application>
 	<uses-sdk
 		android:minSdkVersion="8"/>
-<uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
-<uses-permission android:name="android.permission.DISABLE_KEYGUARD"></uses-permission>
+	<uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
+	<uses-permission android:name="android.permission.DISABLE_KEYGUARD"></uses-permission>
 </manifest>

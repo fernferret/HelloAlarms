@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.KeyguardManager;
 import android.app.KeyguardManager.KeyguardLock;
-import android.app.KeyguardManager.OnKeyguardExitResult;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -33,6 +32,7 @@ public class HelloAlarms extends Activity {
 	
 	private static final String MULTI_STATE = "MULTI";
 	private static final String SINGLE_STATE = "SINGLE";
+	private static final int WAKE_USER_REQUEST_CODE = 42;
 	
 	// Shared Toast
 	private Toast mToast;
@@ -116,15 +116,18 @@ public class HelloAlarms extends Activity {
 			
 			Intent singleAlarmIntent = new Intent(HelloAlarms.this, SingleAlarm.class);
 			
-			PendingIntent singleAlarmPendingIntent = PendingIntent.getBroadcast(HelloAlarms.this, SINGLE_ALARM_RC, singleAlarmIntent, NO_FLAGS);
+			PendingIntent singleAlarmPendingIntent = PendingIntent.getBroadcast(HelloAlarms.this, 
+					SINGLE_ALARM_RC, singleAlarmIntent, NO_FLAGS);
 			long currentTime = System.currentTimeMillis();
+			
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTimeInMillis(currentTime);
 			
 			calendar.add(Calendar.SECOND, TIME_IN_SECONDS_FOR_SINGLE_ALARM);
 			
 			AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-			alarmManager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), singleAlarmPendingIntent);
+			alarmManager.set(AlarmManager.RTC_WAKEUP, 
+					calendar.getTimeInMillis(), singleAlarmPendingIntent);
 			
 			if (mSingleStartTime == 0L) {
 				mSingleStartTime = currentTime;
@@ -206,7 +209,6 @@ public class HelloAlarms extends Activity {
 			double displayTime = TIME_IN_SECONDS_FOR_SINGLE_ALARM - ((System.currentTimeMillis() - (mSingleStartTime + TIME_IN_SECONDS_FOR_SINGLE_ALARM)) / 1000.0);
 			int roundedTime = (int) displayTime;
 			if (displayTime < -2.0) {
-				// sleepDevice();
 				mTimeTillSingle.setText("");
 				mSingleHandler.removeCallbacks(mUpdateSingleTimerTask);
 				mSingleStartTime = 0L;
@@ -247,9 +249,12 @@ public class HelloAlarms extends Activity {
 	private void wakeDevice() {
 		mWakeLock.acquire();
 		mKeyguardLock.disableKeyguard();
+		Intent wakeUser = new Intent(this, WakeUpAlert.class);
+		startActivityForResult(wakeUser, WAKE_USER_REQUEST_CODE);
 	}
 	
-	private void sleepDevice() {
+	private void sleepDeviceAfterWoken() {
+		mKeyguardLock.reenableKeyguard();
 		mWakeLock.release();
 	}
 	
